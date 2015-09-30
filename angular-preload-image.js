@@ -15,15 +15,16 @@ angular.module('angular-preload-image').directive('preloadImage', ['preLoader', 
         terminal: true,
         priority: 100,
         link: function(scope, element, attrs) {
-            var url = attrs.ngSrc;
-            scope.default = attrs.defaultImage || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wEWEygNWiLqlwAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAMSURBVAjXY/j//z8ABf4C/tzMWecAAAAASUVORK5CYII=";
-            attrs.$set('src', scope.default);
-            preLoader(url, function(){
-                attrs.$set('src', url);
-            }, function(){
-                if (attrs.fallbackImage != undefined) {
-                    attrs.$set('src', attrs.fallbackImage);
-                }
+            attrs.$observe('ngSrc', function (url) {
+                scope.default = attrs.defaultImage || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wEWEygNWiLqlwAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAMSURBVAjXY/j//z8ABf4C/tzMWecAAAAASUVORK5CYII=";
+                attrs.$set('src', scope.default);
+                preLoader(url, function () {
+                    attrs.$set('src', url);
+                }, function () {
+                    if (attrs.fallbackImage != undefined) {
+                        attrs.$set('src', attrs.fallbackImage);
+                    }
+                });
             });
         }
     };
@@ -32,24 +33,25 @@ angular.module('angular-preload-image').directive('preloadBgImage', ['preLoader'
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
-            if (attrs.preloadBgImage != undefined) {
+            attrs.$observe('preloadBgImage', function (preloadBgImage) {
                 //Define default image
-                scope.default = attrs.defaultImage || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wEWEygNWiLqlwAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAMSURBVAjXY/j//z8ABf4C/tzMWecAAAAASUVORK5CYII=";
+                var fallbackImage = attrs.fallbackImage;
+                scope.default     = attrs.defaultImage || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wEWEygNWiLqlwAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAMSURBVAjXY/j//z8ABf4C/tzMWecAAAAASUVORK5CYII=";
                 element.css({
                     'background-image': 'url("' + scope.default + '")'
                 });
-                preLoader(attrs.preloadBgImage, function(){
+                preLoader(preloadBgImage, function () {
                     element.css({
-                        'background-image': 'url("' + attrs.preloadBgImage + '")'
+                        'background-image': 'url("' + preloadBgImage + '")'
                     });
-                }, function(){
-                    if (attrs.fallbackImage != undefined) {
+                }, function () {
+                    if (fallbackImage != undefined) {
                         element.css({
-                            'background-image': 'url("' + attrs.fallbackImage + '")'
+                            'background-image': 'url("' + fallbackImage + '")'
                         });
                     }
                 });
-            }
+            });
         }
     };
 }]);
